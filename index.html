@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image" href="https://www.silicon.co.uk/wp-content/uploads/2012/11/beboy-1280x720.jpg">
+    <title>Internet Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .quiz-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style-type: none;
+            padding: 0;
+        }
+        .options li {
+            background: #ddd;
+            margin: 5px 0;
+            padding: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .options li:hover {
+            background: #bbb;
+        }
+        #submit {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        #submit:hover {
+            background: #0056b3;
+        }
+        #result {
+            font-size: 18px;
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>Internet Quiz</h1>
+        <div id="quiz"></div>
+        <button id="submit">Submit Answer</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+    const quizData = [
+        {
+            question: "What does HTTP stand for?",
+            options: [
+                "HyperText Transfer Protocol",
+                "HyperText Transmission Process",
+                "Hyperlink Transfer Procedure",
+                "Hypertextual Transfer Protocol"
+            ],
+            answer: "HyperText Transfer Protocol"
+        },
+        {
+            question: "What does IP stand for?",
+            options: [
+                "Internet Protocol",
+                "Internet Provider",
+                "Information Protocol",
+                "Integrated Program"
+            ],
+            answer: "Internet Protocol"
+        },
+        {
+            question: "What is the main function of DNS in the internet?",
+            options: [
+                "Translate domain names to IP addresses",
+                "Secure data over the internet",
+                "Host websites on the server",
+                "Provide cloud storage"
+            ],
+            answer: "Translate domain names to IP addresses"
+        },
+        {
+            question: "What year was the World Wide Web publicly introduced?",
+            options: ["1989", "1991", "1995", "2000"],
+            answer: "1991"
+        },
+        {
+            question: "What does FTP stand for?",
+            options: [
+                "File Transfer Protocol",
+                "Fast Transmission Process",
+                "File Tracking Procedure",
+                "First Transfer Protocol"
+            ],
+            answer: "File Transfer Protocol"
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const quiz = document.getElementById("quiz");
+    const submitBtn = document.getElementById("submit");
+    const resultDiv = document.getElementById("result");
+
+    function loadQuestion() {
+        const currentQuizData = quizData[currentQuestion];
+        quiz.innerHTML = `
+            <div class="question">${currentQuizData.question}</div>
+            <ul class="options">
+                ${currentQuizData.options.map(option => `<li>${option}</li>`).join('')}
+            </ul>
+        `;
+
+        const options = document.querySelectorAll(".options li");
+        options.forEach(option => {
+            option.addEventListener("click", function() {
+                options.forEach(option => option.style.background = "#ddd");
+                option.style.background = "#bbb";
+                selectedAnswer = option.innerText;
+            });
+        });
+    }
+
+    let selectedAnswer = null;
+
+    submitBtn.addEventListener("click", function() {
+        if (!selectedAnswer) {
+            resultDiv.style.display = "block";
+            resultDiv.style.color = "black";
+            resultDiv.innerHTML = "Please select an answer!";
+            return;
+        }
+
+        // Check if the selected answer is correct
+        if (selectedAnswer === quizData[currentQuestion].answer) {
+            score++;
+            resultDiv.style.color = "green";
+            resultDiv.innerHTML = "Correct!";
+        } else {
+            resultDiv.style.color = "red";
+            resultDiv.innerHTML = `Wrong! The correct answer was: ${quizData[currentQuestion].answer}`;
+        }
+
+        resultDiv.style.display = "block";
+        
+        currentQuestion++;
+        selectedAnswer = null; // Reset the selected answer for the next question
+        
+        // Check if there are more questions
+        if (currentQuestion < quizData.length) {
+            setTimeout(() => {
+                loadQuestion();
+                resultDiv.style.display = "none";
+            }, 2000); // Wait 2 seconds before loading the next question
+        } else {
+            // End of quiz, display the final score
+            quiz.style.display = "none";
+            submitBtn.style.display = "none";
+            resultDiv.style.color = "black";
+            resultDiv.innerHTML = `You scored ${score} out of ${quizData.length}!`;
+        }
+    });
+
+    loadQuestion();
+    </script>
+
+</body>
+</html>
